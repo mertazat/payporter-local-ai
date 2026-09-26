@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 .env
 company_code_flask_test/flask/
+code_index.json
