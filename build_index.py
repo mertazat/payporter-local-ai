@@ -1,8 +1,9 @@
 from pathlib import Path
 import json
+import sys
 import ollama
 
-CODE_FOLDER = Path("company_code")
+CODE_FOLDER = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("company_code")
 INDEX_FILE = Path("code_index.json")
 
 SUPPORTED_EXTENSIONS = {
