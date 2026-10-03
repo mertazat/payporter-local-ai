@@ -3,6 +3,7 @@ import os
 
 from rag_service import ask_codebase, search_code
 from document_rag import ask_document
+from document_index import build_document_index
 
 st.set_page_config(
     page_title="PayPorter Kod Asistanı",
@@ -379,6 +380,25 @@ elif page == "Document Assistant":
     st.write(
         "Ask questions about indexed PDF documents."
     )
+    uploaded_pdf = st.file_uploader(
+        "Upload PDF",
+        type=["pdf"]
+    )
+
+    if uploaded_pdf is not None:
+        os.makedirs("documents", exist_ok=True)
+
+        pdf_path = os.path.join("documents", uploaded_pdf.name)
+
+        with open(pdf_path, "wb") as f:
+            f.write(uploaded_pdf.getbuffer())
+
+        st.success(f"PDF uploaded: {uploaded_pdf.name}")
+   
+    with st.spinner("Indexing PDF..."):
+        build_document_index()
+
+    st.success("Document index updated.")
 
     document_question = st.text_input(
         "Document question",
