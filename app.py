@@ -1,6 +1,8 @@
 import streamlit as st
+import os
 
 from rag_service import ask_codebase, search_code
+from document_rag import ask_document
 
 st.set_page_config(
     page_title="PayPorter Kod Asistanı",
@@ -163,6 +165,7 @@ with st.sidebar:
         [
             "Chat",
             "Code Search",
+            "Document Assistant",
             "Index Management"
         ],
         label_visibility="collapsed"
@@ -366,6 +369,53 @@ elif page == "Code Search":
             st.warning(
                 "Enter a search term."
             )
+
+# ---------- DOCUMENT ASSISTANT ----------
+
+elif page == "Document Assistant":
+
+    st.header("Document Assistant")
+
+    st.write(
+        "Ask questions about indexed PDF documents."
+    )
+
+    document_question = st.text_input(
+        "Document question",
+        placeholder="Example: Can VPN credentials be shared with another employee?"
+    )
+
+    if st.button(
+        "Ask Document",
+        use_container_width=True
+    ):
+        if document_question.strip():
+            try:
+                answer, sources = ask_document(document_question)
+
+                st.markdown("### Answer")
+                st.write(answer)
+
+                if sources:
+                    st.markdown("### Sources")
+
+                    for source in sources:
+                        with st.expander(
+                            f'{source["file"]} - Page {source["page"]}'
+                        ):
+                            st.write(
+                                f'Similarity: {source["score"]:.3f}'
+                            )
+                else:
+                    st.info("No document sources found.")
+
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+        else:
+            st.warning("Enter a document question.")
+
+
 
 
 # ---------- INDEX ----------
